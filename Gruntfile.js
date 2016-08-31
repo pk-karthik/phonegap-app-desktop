@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                     platform: 'win32',
                     arch: 'ia32',
                     icon: './www/img/app-icons/icon.ico',
-                    asar: true
+                    asar: false
                 }
             }
         },
@@ -92,13 +92,15 @@ module.exports = function(grunt) {
 
     // OSX code signing
     grunt.task.registerTask('code-sign-osx', function() {
-        var shell = require('shelljs');
-        var signConfig = grunt.file.readJSON("sign-config.json")
-        shell.exec("codesign --verbose --deep --force --sign " + "'"+signConfig.certName+"'" + " build/PhoneGap-darwin-x64/PhoneGap.app");
-        shell.exec("codesign --verbose --verify build/PhoneGap-darwin-x64/PhoneGap.app");
-        shell.exec("codesign -vv -d build/PhoneGap-darwin-x64/PhoneGap.app");
-        shell.exec("codesign --verbose --force --sign " + "'"+signConfig.certName+"'" + " build/PhoneGap-darwin-x64/PhoneGap.app/Contents/MacOS/PhoneGap");
-        shell.exec("codesign --verbose --verify build/PhoneGap-darwin-x64/PhoneGap.app/Contents/MacOS/PhoneGap");
+        if (process.platform == 'darwin') {
+            var shell = require('shelljs');
+            var signConfig = grunt.file.readJSON("sign-config.json")
+            shell.exec("codesign --verbose --deep --force --sign " + "'"+signConfig.certName+"'" + " build/PhoneGap-darwin-x64/PhoneGap.app");
+            shell.exec("codesign --verbose --verify build/PhoneGap-darwin-x64/PhoneGap.app");
+            shell.exec("codesign -vv -d build/PhoneGap-darwin-x64/PhoneGap.app");
+            shell.exec("codesign --verbose --force --sign " + "'"+signConfig.certName+"'" + " build/PhoneGap-darwin-x64/PhoneGap.app/Contents/MacOS/PhoneGap");
+            shell.exec("codesign --verbose --verify build/PhoneGap-darwin-x64/PhoneGap.app/Contents/MacOS/PhoneGap");
+        }
     });
 
     // Clean build directories

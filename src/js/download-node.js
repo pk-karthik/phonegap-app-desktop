@@ -84,6 +84,9 @@ var downloadNode = function(version, done) {
 
   var downloadFile = function() {
     if (process.platform === 'win32') {
+        if (!fs.existsSync(path.join(filename, '..'))) {
+            fs.mkdirSync(path.join(filename, '..'));
+        }
       downloadFileToLocation(downloadURL, filename, done);
     } else {
       var next = copyNodeBinToLocation.bind(this, done, version, filename);
